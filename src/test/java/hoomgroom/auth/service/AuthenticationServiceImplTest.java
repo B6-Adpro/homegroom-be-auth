@@ -19,6 +19,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -70,58 +72,58 @@ class AuthenticationServiceImplTest {
     }
 
     @Test
-    void testRegister() {
+    void testRegister() throws ExecutionException, InterruptedException {
         when(passwordEncoder.encode(registerRequest.getPassword())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(jwtService.generateToken(any(User.class))).thenReturn("jwtToken");
 
-        AuthenticationResponse authenticationResponse = authenticationService.register(registerRequest);
+        CompletableFuture<AuthenticationResponse> authenticationResponse = authenticationService.register(registerRequest);
 
         assertNotNull(authenticationResponse);
-        assertEquals("jwtToken", authenticationResponse.getToken());
+        assertEquals("jwtToken", authenticationResponse.get().getToken());
         verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
-    void testRegisterFailure() {
+    void testRegisterFailure() throws ExecutionException, InterruptedException {
         when(passwordEncoder.encode(registerRequest.getPassword())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenThrow(DataIntegrityViolationException.class);
 
-        AuthenticationResponse response = authenticationService.register(registerRequest);
+        CompletableFuture<AuthenticationResponse> authenticationResponse = authenticationService.register(registerRequest);
 
-        assertNotNull(response);
-        assertEquals("Username must be unique!", response.getMessage());
-        assertNull(response.getToken());
+        assertNotNull(authenticationResponse);
+        assertEquals("Username must be unique!", authenticationResponse.get().getMessage());
+        assertNull(authenticationResponse.get().getToken());
         verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
-    void testAuthenticate() {
+    void testAuthenticate() throws ExecutionException, InterruptedException {
         when(userRepository.findByUsername(authenticationRequest.getUsername())).thenReturn(Optional.of(user));
         when(jwtService.generateToken(user)).thenReturn("jwtToken");
 
         doAnswer(invocation -> null).when(authenticationManager)
                 .authenticate(any(UsernamePasswordAuthenticationToken.class));
 
-        AuthenticationResponse response = authenticationService.authenticate(authenticationRequest);
+        CompletableFuture<AuthenticationResponse> response = authenticationService.authenticate(authenticationRequest);
 
         assertNotNull(response);
-        assertEquals("jwtToken", response.getToken());
+        assertEquals("jwtToken", response.get().getToken());
         verify(authenticationManager, times(1))
                 .authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(userRepository, times(1)).findByUsername(authenticationRequest.getUsername());
     }
 
     @Test
-    void testAuthenticateFailure() {
+    void testAuthenticateFailure() throws ExecutionException, InterruptedException {
         doThrow(BadCredentialsException.class).when(authenticationManager)
                 .authenticate(any(UsernamePasswordAuthenticationToken.class));
 
-        AuthenticationResponse response = authenticationService.authenticate(authenticationRequest);
+        CompletableFuture<AuthenticationResponse> response = authenticationService.authenticate(authenticationRequest);
 
         assertNotNull(response);
-        assertEquals("Login Gagal!", response.getMessage());
-        assertNull(response.getToken());
+        assertEquals("Login Failed!", response.get().getMessage());
+        assertNull(response.get().getToken());
         verify(authenticationManager, times(1))
                 .authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(userRepository, never()).findByUsername(anyString());
