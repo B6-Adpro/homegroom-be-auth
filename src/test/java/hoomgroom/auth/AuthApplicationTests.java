@@ -10,7 +10,6 @@ class AuthApplicationTests {
 
     @Test
     void contextLoads() {
-        // Assert that the application context is loaded successfully
         assertTrue(true, "The application context should have loaded.");
     }
 
