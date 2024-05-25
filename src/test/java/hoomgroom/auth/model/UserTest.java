@@ -11,7 +11,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UserTest {
+class UserTest {
     User user;
     Collection<? extends GrantedAuthority> authorities1;
 

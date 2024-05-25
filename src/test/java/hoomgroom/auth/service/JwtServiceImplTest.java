@@ -25,7 +25,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class JwtServiceImplTest {
+class JwtServiceImplTest {
 
     private static final String SECRET_KEY = System.getenv("JWT_SECRET_KEY");
     @InjectMocks

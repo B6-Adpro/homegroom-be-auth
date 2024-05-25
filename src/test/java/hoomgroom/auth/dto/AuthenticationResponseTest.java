@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AuthenticationResponseTest {
+class AuthenticationResponseTest {
 
     @Test
-    public void testBuilder() {
+    void testBuilder() {
         String token = "token test";
 
         AuthenticationResponse authResponse = AuthenticationResponse.builder()
@@ -18,8 +18,8 @@ public class AuthenticationResponseTest {
     }
 
     @Test
-    public void testToString() {
-        assertEquals("AuthenticationResponse.AuthenticationResponseBuilder(token=null)",
+    void testToString() {
+        assertEquals("AuthenticationResponse.AuthenticationResponseBuilder(message=null, token=null)",
                 AuthenticationResponse.builder().toString());
     }
 }
