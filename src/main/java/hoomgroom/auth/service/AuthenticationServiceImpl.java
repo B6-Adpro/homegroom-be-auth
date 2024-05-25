@@ -8,11 +8,14 @@ import hoomgroom.auth.model.User;
 import hoomgroom.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +25,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtServiceImpl jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    @Async
+    public CompletableFuture<AuthenticationResponse> register(RegisterRequest request) {
         User user = User.builder()
                 .username(request.getUsername())
                 .firstname(request.getFirstname())
@@ -34,14 +38,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         try {
             userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            return AuthenticationResponse.builder().message("Username must be unique!").build();
+            AuthenticationResponse response = AuthenticationResponse.builder().message("Username must be unique!").build();
+            return CompletableFuture.completedFuture(response);
         }
 
         String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().message("Register Success!").token(jwtToken).build();
+        AuthenticationResponse response = AuthenticationResponse.builder().message("Register Success!").token(jwtToken).build();
+        return CompletableFuture.completedFuture(response);
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    @Async
+    public CompletableFuture<AuthenticationResponse> authenticate(AuthenticationRequest request) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -50,13 +57,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     )
             );
         } catch (BadCredentialsException e) {
-            return AuthenticationResponse.builder().message("Login Gagal!").build();
+            AuthenticationResponse response = AuthenticationResponse.builder().message("Login Failed!").build();
+            return CompletableFuture.completedFuture(response);
         }
-
 
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
         String jwtToken = jwtService.generateToken(user);
-
-        return AuthenticationResponse.builder().message("Login Success!").token(jwtToken).build();
+        AuthenticationResponse response = AuthenticationResponse.builder().message("Login Success!").token(jwtToken).build();
+        return CompletableFuture.completedFuture(response);
     }
 }

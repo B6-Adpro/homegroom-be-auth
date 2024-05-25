@@ -5,9 +5,11 @@ import hoomgroom.auth.dto.AuthenticationResponse;
 import hoomgroom.auth.dto.RegisterRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.CompletableFuture;
+
 @Service
 public interface AuthenticationService {
-    AuthenticationResponse register(RegisterRequest request);
-    AuthenticationResponse authenticate(AuthenticationRequest request);
+    CompletableFuture<AuthenticationResponse> register(RegisterRequest request);
+    CompletableFuture<AuthenticationResponse> authenticate(AuthenticationRequest request);
 
 }
