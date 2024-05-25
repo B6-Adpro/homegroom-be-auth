@@ -11,6 +11,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -27,7 +30,7 @@ class AuthenticationControllerTest {
     }
 
     @Test
-    void testRegister() {
+    void testRegister() throws ExecutionException, InterruptedException {
         RegisterRequest registerRequest =
                 RegisterRequest
                     .builder()
@@ -38,17 +41,17 @@ class AuthenticationControllerTest {
                     .build();
 
         AuthenticationResponse expectedResponse = AuthenticationResponse.builder().token("token").build();
-        when(authenticationService.register(registerRequest)).thenReturn(expectedResponse);
+        when(authenticationService.register(registerRequest)).thenReturn(CompletableFuture.completedFuture(expectedResponse));
 
-        ResponseEntity<AuthenticationResponse> responseEntity = authenticationController.register(registerRequest);
+        CompletableFuture<ResponseEntity<AuthenticationResponse>> responseEntity = authenticationController.register(registerRequest);
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedResponse, responseEntity.getBody());
+        assertEquals(HttpStatus.OK, responseEntity.get().getStatusCode());
+        assertEquals(expectedResponse, responseEntity.get().getBody());
         verify(authenticationService, times(1)).register(registerRequest);
     }
 
     @Test
-    void testLogin() {
+    void testLogin() throws ExecutionException, InterruptedException {
         AuthenticationRequest authenticationRequest =
                 AuthenticationRequest
                     .builder()
@@ -57,12 +60,12 @@ class AuthenticationControllerTest {
                     .build();
 
         AuthenticationResponse expectedResponse = AuthenticationResponse.builder().token("token").build();
-        when(authenticationService.authenticate(authenticationRequest)).thenReturn(expectedResponse);
+        when(authenticationService.authenticate(authenticationRequest)).thenReturn(CompletableFuture.completedFuture(expectedResponse));
 
-        ResponseEntity<AuthenticationResponse> responseEntity = authenticationController.login(authenticationRequest);
+        CompletableFuture<ResponseEntity<AuthenticationResponse>> responseEntity = authenticationController.login(authenticationRequest);
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedResponse, responseEntity.getBody());
+        assertEquals(HttpStatus.OK, responseEntity.get().getStatusCode());
+        assertEquals(expectedResponse, responseEntity.get().getBody());
         verify(authenticationService, times(1)).authenticate(authenticationRequest);
     }
 }

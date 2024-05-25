@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.CompletableFuture;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -18,16 +20,18 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register (
+    public CompletableFuture<ResponseEntity<AuthenticationResponse>> register (
             @RequestBody RegisterRequest request
     ) {
-        return ResponseEntity.ok(authenticationService.register(request));
+        return authenticationService.register(request)
+                .thenApply(ResponseEntity::ok);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login (
+    public CompletableFuture<ResponseEntity<AuthenticationResponse>> login (
             @RequestBody AuthenticationRequest request
     ) {
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        return authenticationService.authenticate(request)
+                .thenApply(ResponseEntity::ok);
     }
 }
