@@ -1,6 +1,8 @@
 package hoomgroom.auth.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Generated;
+import lombok.Getter;
 
 @Getter
 @Builder

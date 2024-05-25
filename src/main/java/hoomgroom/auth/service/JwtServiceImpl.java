@@ -4,7 +4,6 @@ import hoomgroom.auth.dto.JWTUserDTO;
 import hoomgroom.auth.model.User;
 import hoomgroom.auth.repository.UserRepository;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;

@@ -1,8 +1,5 @@
 package hoomgroom.auth.service;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 import hoomgroom.auth.dto.AuthenticationRequest;
 import hoomgroom.auth.dto.AuthenticationResponse;
 import hoomgroom.auth.dto.RegisterRequest;
@@ -21,7 +18,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceImplTest {
@@ -44,7 +44,6 @@ public class AuthenticationServiceImplTest {
     private User user;
     private RegisterRequest registerRequest;
     private AuthenticationRequest authenticationRequest;
-    private AuthenticationResponse authenticationResponse;
 
     @BeforeEach
     void setUp() {
@@ -75,7 +74,7 @@ public class AuthenticationServiceImplTest {
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(jwtService.generateToken(any(User.class))).thenReturn("jwtToken");
 
-        authenticationResponse = authenticationService.register(registerRequest);
+        AuthenticationResponse authenticationResponse = authenticationService.register(registerRequest);
 
         assertNotNull(authenticationResponse);
         assertEquals("jwtToken", authenticationResponse.getToken());

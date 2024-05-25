@@ -21,8 +21,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class JwtServiceImplTest {
@@ -94,9 +94,7 @@ public class JwtServiceImplTest {
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
 
-        assertThrows(io.jsonwebtoken.ExpiredJwtException.class, () -> {
-            service.isTokenValid(token, userDetails);
-        });
+        assertThrows(io.jsonwebtoken.ExpiredJwtException.class, () -> service.isTokenValid(token, userDetails));
     }
 
     private Key getSignInKey() {

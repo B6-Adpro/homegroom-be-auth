@@ -10,4 +10,9 @@ class AuthApplicationTests {
     void contextLoads() {
     }
 
+    @Test
+    void mainMethodRunsSuccessfully() {
+        AuthApplication.main(new String[]{});
+    }
+
 }
