@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class JwtAuthenticationFilterTest {
+class JwtAuthenticationFilterTest {
 
     @Mock
     private JwtServiceImpl jwtService;
@@ -98,9 +98,9 @@ public class JwtAuthenticationFilterTest {
 
     @Test
     void testDoFilterInternalAuthHeaderNotPrefixed() throws Exception {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        FilterChain filterChain = mock(FilterChain.class);
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+        filterChain = mock(FilterChain.class);
 
         SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
@@ -114,9 +114,9 @@ public class JwtAuthenticationFilterTest {
 
     @Test
     void testDoFilterInternalInvalidToken() throws Exception {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        FilterChain filterChain = mock(FilterChain.class);
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+        filterChain = mock(FilterChain.class);
         UserDetails userDetails = mock(UserDetails.class);
 
         when(request.getHeader("Authorization")).thenReturn("Bearerinvalid-token");
@@ -152,8 +152,8 @@ public class JwtAuthenticationFilterTest {
 
     @Test
     void testDoFilterInternalRequestMissing() {
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        FilterChain filterChain = mock(FilterChain.class);
+        response = mock(HttpServletResponse.class);
+        filterChain = mock(FilterChain.class);
 
         assertThrows(NullPointerException.class, () ->
                 jwtAuthenticationFilter.doFilterInternal(null, response, filterChain)
@@ -162,8 +162,8 @@ public class JwtAuthenticationFilterTest {
 
     @Test
     void testDoFilterInternalResponseMissing() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        FilterChain filterChain = mock(FilterChain.class);
+        request = mock(HttpServletRequest.class);
+        filterChain = mock(FilterChain.class);
 
         assertThrows(NullPointerException.class, () ->
                 jwtAuthenticationFilter.doFilterInternal(request, null, filterChain)
@@ -172,8 +172,8 @@ public class JwtAuthenticationFilterTest {
 
     @Test
     void testDoFilterInternalFilterChainMissing() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
 
         assertThrows(NullPointerException.class, () ->
                 jwtAuthenticationFilter.doFilterInternal(request, response, null)

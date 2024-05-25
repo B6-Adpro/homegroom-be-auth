@@ -1,14 +1,12 @@
 package hoomgroom.auth.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Generated;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Generated
 public class RegisterRequest {
     private String username;
     private String firstname;

@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AuthenticationRequestTest {
+class AuthenticationRequestTest {
 
     @Test
-    public void testBuilder() {
+    void testBuilder() {
         String username = "testUser";
         String password = "testPassword";
 
@@ -21,7 +21,7 @@ public class AuthenticationRequestTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("AuthenticationRequest.AuthenticationRequestBuilder(username=null, password=null)",
                 AuthenticationRequest.builder().toString());
     }

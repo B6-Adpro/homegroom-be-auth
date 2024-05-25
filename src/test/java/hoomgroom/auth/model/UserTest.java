@@ -11,7 +11,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UserTest {
+class UserTest {
     User user;
     Collection<? extends GrantedAuthority> authorities1;
 
@@ -86,5 +86,11 @@ public class UserTest {
     void testGetUserAuthorities() {
         assertEquals(1, authorities1.size());
         assertTrue(authorities1.contains(new SimpleGrantedAuthority(user.getRole().name())));
+    }
+
+    @Test
+    void testToString() {
+        assertEquals("User.UserBuilder(id=null, username=null, firstname=null, lastname=null, password=null, role=null)",
+                User.builder().toString());
     }
 }
