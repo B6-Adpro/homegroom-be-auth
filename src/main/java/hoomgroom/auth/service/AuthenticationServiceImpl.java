@@ -30,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
         userRepository.save(user);
         String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder().message("Register Success!").token(jwtToken).build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -44,6 +44,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
         String jwtToken = jwtService.generateToken(user);
 
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder().message("Login Success!").token(jwtToken).build();
     }
 }
