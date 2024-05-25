@@ -12,14 +12,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -82,6 +83,19 @@ class AuthenticationServiceImplTest {
     }
 
     @Test
+    void testRegisterFailure() {
+        when(passwordEncoder.encode(registerRequest.getPassword())).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenThrow(DataIntegrityViolationException.class);
+
+        AuthenticationResponse response = authenticationService.register(registerRequest);
+
+        assertNotNull(response);
+        assertEquals("Username must be unique!", response.getMessage());
+        assertNull(response.getToken());
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
     void testAuthenticate() {
         when(userRepository.findByUsername(authenticationRequest.getUsername())).thenReturn(Optional.of(user));
         when(jwtService.generateToken(user)).thenReturn("jwtToken");
@@ -96,5 +110,20 @@ class AuthenticationServiceImplTest {
         verify(authenticationManager, times(1))
                 .authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(userRepository, times(1)).findByUsername(authenticationRequest.getUsername());
+    }
+
+    @Test
+    void testAuthenticateFailure() {
+        doThrow(BadCredentialsException.class).when(authenticationManager)
+                .authenticate(any(UsernamePasswordAuthenticationToken.class));
+
+        AuthenticationResponse response = authenticationService.authenticate(authenticationRequest);
+
+        assertNotNull(response);
+        assertEquals("Login Gagal!", response.getMessage());
+        assertNull(response.getToken());
+        verify(authenticationManager, times(1))
+                .authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(userRepository, never()).findByUsername(anyString());
     }
 }
